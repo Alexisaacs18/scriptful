@@ -1,0 +1,34 @@
+MISDIRECTION PLOT TWIST TECHNIQUES
+==================================
+
+FILM EXAMPLES:
+- "The Sixth Sense" (1999) - Bruce Willis revelation
+- "Fight Club" (1999) - Tyler Durden twist
+- "The Usual Suspects" (1995) - Keyser Soze reveal
+
+TECHNIQUE ANALYSIS:
+1. Red Herrings: Plant false clues that seem important
+2. Perspective Manipulation: Show events from misleading viewpoints
+3. Selective Information: Withhold key details until the reveal
+4. Character Deception: Make characters lie or mislead
+5. Timeline Manipulation: Present events out of chronological order
+
+IMPLEMENTATION STRATEGIES:
+- Plant clues that seem to point one way
+- Use unreliable narrators
+- Create false assumptions in the audience
+- Make the twist logical in hindsight
+- Ensure the reveal changes everything
+
+EXAMPLE STRUCTURE:
+1. Setup: Establish apparent reality
+2. Development: Build on false assumptions
+3. Misdirection: Reinforce wrong conclusions
+4. Reveal: Show the true situation
+5. Recontextualization: Make everything make sense
+
+KEY PRINCIPLES:
+- The twist must be fair (clues should exist)
+- It should change the story's meaning
+- Avoid "it was all a dream" unless brilliantly executed
+- Make the audience want to rewatch for clues

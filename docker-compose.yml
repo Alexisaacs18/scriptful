@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:6.0
+    container_name: script_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+    volumes:
+      - mongodb_data:/data/db
+      - ./scripts:/scripts
+    networks:
+      - script_network
+
+  # Backend API Gateway
+  backend:
+    build: ./backend
+    container_name: script_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      MONGODB_URI: mongodb://admin:password123@mongodb:27017/script_db?authSource=admin
+      AI_SERVICE_URL: http://ai-service:8000
+      PORT: 5000
+    depends_on:
+      - mongodb
+      - ai-service
+    volumes:
+      - ./scripts:/app/scripts
+      - ./backend:/app
+    networks:
+      - script_network
+
+  # AI Service
+  ai-service:
+    build: ./ai-service
+    container_name: script_ai_service
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      FLASK_ENV: development
+      FLASK_APP: app.py
+      PORT: 8000
+    volumes:
+      - ./scripts:/app/scripts
+      - ./ai-service:/app
+    networks:
+      - script_network
+
+  # Frontend React App
+  frontend:
+    build: ./frontend
+    container_name: script_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:5000
+      REACT_APP_AI_SERVICE_URL: http://localhost:8000
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - script_network
+
+volumes:
+  mongodb_data:
+
+networks:
+  script_network:
+    driver: bridge

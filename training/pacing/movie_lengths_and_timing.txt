@@ -1,0 +1,49 @@
+MOVIE LENGTHS AND LINE-TO-MINUTE RATIOS
+
+Standard Movie Lengths:
+- Feature Films: 90-180 minutes (average: 120 minutes)
+- Short Films: 1-40 minutes (average: 15 minutes)
+- TV Episodes: 22-60 minutes (average: 45 minutes)
+- Web Series: 3-15 minutes (average: 8 minutes)
+
+Line-to-Minute Conversion:
+- Feature Screenplay: 1 page ≈ 1 minute of screen time
+- Industry Standard: 90-120 pages for 90-120 minute films
+- Dialogue-Heavy Scenes: 1 page ≈ 45-60 seconds
+- Action-Heavy Scenes: 1 page ≈ 30-45 seconds
+- Montage Sequences: 1 page ≈ 15-30 seconds
+
+Page Format Guidelines:
+- Standard screenplay format: 12pt Courier font
+- 1.5 inch left margin, 1 inch right margin
+- 1 inch top and bottom margins
+- Approximately 55 lines per page
+- Action lines: 2-3 lines per paragraph maximum
+- Dialogue: 2-3 lines per character speech maximum
+
+Pacing Calculations:
+- Slow Build: 2-3 pages per major story beat
+- Medium Pace: 1-2 pages per major story beat
+- Rapid Sequence: 0.5-1 page per major story beat
+- Climax: 0.25-0.5 pages per major story beat
+
+Time Management Tips:
+- Opening Act (25%): Establish world and characters
+- Second Act (50%): Develop conflict and complications
+- Third Act (25%): Resolve conflict and provide closure
+- Each major plot point should advance the story significantly
+- Balance dialogue, action, and description for optimal pacing
+
+Industry Standards:
+- Academy Award consideration: Minimum 40 minutes for feature films
+- Sundance Film Festival: Short films under 50 minutes
+- Netflix Original: 45-60 minutes for drama series
+- YouTube Shorts: 15 seconds to 60 seconds
+- TikTok: 15 seconds to 3 minutes
+
+Practical Applications:
+- Use these ratios to estimate script length before writing
+- Plan pacing based on target runtime
+- Adjust scene length to fit time constraints
+- Calculate budget based on page count
+- Schedule production timeline using page-to-minute ratios

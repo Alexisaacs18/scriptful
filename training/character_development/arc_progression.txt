@@ -1,0 +1,41 @@
+CHARACTER ARC PROGRESSION TECHNIQUES
+====================================
+
+FILM EXAMPLES:
+- "Rocky" (1976) - From underdog to champion
+- "The Godfather" (1972) - Michael's transformation
+- "Casablanca" (1942) - Rick's redemption arc
+
+TECHNIQUE ANALYSIS:
+1. Starting Point: Establish character's initial state/flaws
+2. Inciting Incident: Event that forces change
+3. Resistance: Character fights against transformation
+4. Midpoint: Major realization or decision point
+5. Crisis: Lowest point that forces change
+6. Climax: Character acts on their transformation
+7. Resolution: New character state is demonstrated
+
+ARC TYPES:
+- Positive Arc: Character grows/improves
+- Negative Arc: Character deteriorates
+- Flat Arc: Character changes the world around them
+- Corrupted Arc: Character becomes worse
+
+IMPLEMENTATION TIPS:
+- Make the arc meaningful to the plot
+- Show internal and external conflicts
+- Use dialogue to reveal character growth
+- Demonstrate change through actions, not just words
+- Ensure the arc serves the story's theme
+
+EXAMPLE PROGRESSION:
+1. Act 1: Character in comfort zone
+2. Act 2A: Character resists change
+3. Act 2B: Character begins to change
+4. Act 3: Character fully transformed
+
+KEY PRINCIPLES:
+- Change should be earned, not given
+- Character flaws should relate to the plot
+- Transformation should affect other characters
+- The arc should have emotional weight

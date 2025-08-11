@@ -1,0 +1,25 @@
+SNAPPY DIALOGUE TECHNIQUES
+==========================
+
+FILM EXAMPLES:
+- "Die Hard" (1988) - John McClane's one-liners
+- "The Princess Bride" (1987) - Westley's witty responses
+- "Pulp Fiction" (1994) - Jules and Vincent's banter
+
+TECHNIQUE ANALYSIS:
+1. Timing: Deliver quips at moments of tension or victory
+2. Character Voice: Each character has distinct speech patterns
+3. Context Awareness: Quips relate to the immediate situation
+4. Brevity: Keep responses short and punchy
+5. Personality: Reflect the character's background and attitude
+
+EXAMPLE EXCHANGES:
+"Yippee-ki-yay, motherfucker!" - Die Hard
+"Have fun storming the castle!" - The Princess Bride
+"Say 'what' again. I dare you." - Pulp Fiction
+
+IMPLEMENTATION TIPS:
+- Use quips to release tension
+- Make them character-specific
+- Keep them relevant to the scene
+- Don't overuse - save for key moments

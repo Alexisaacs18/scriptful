@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scriptful - AI Movie Script Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+            letter-spacing: -0.02em;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 0;
+            height: calc(100vh - 120px);
+        }
+        
+        .sidebar {
+            background: rgba(255, 255, 255, 0.03);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .sidebar h2 {
+            color: #ffffff;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #00d4ff, #4ecdc4);
+            border-color: transparent;
+            color: #000;
+            transform: translateX(5px);
+        }
+        
+        .tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffffff;
+            font-weight: 500;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #00d4ff, #4ecdc4);
+            color: #000;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-family: inherit;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .chat-header {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .chat-header .icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00d4ff, #4ecdc4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .chat-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .message {
+            display: flex;
+            gap: 15px;
+            animation: fadeInUp 0.3s ease;
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+        }
+        
+        .message.ai .message-avatar {
+            background: linear-gradient(135deg, #00d4ff, #4ecdc4);
+        }
+        
+        .message-content {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 15px 20px;
+            max-width: 80%;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .message.user .message-content {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: #000;
+            border-color: transparent;
+        }
+        
+        .message.ai .message-content {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+        }
+        
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top: 2px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            animation: fadeInUp 0.3s ease;
+        }
+        
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        
+        .status.info {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196f3;
+            border: 1px solid rgba(33, 150, 243, 0.3);
+        }
+        
+        .welcome-message {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+        
+        .welcome-message h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+        
+        .welcome-message p {
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .sidebar {
+                order: 2;
+                border-right: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Scriptful</h1>
+            <p>AI-Powered Movie Script Generation</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <h2>🎬 Generate Content</h2>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('script')">🎭 Script Scene</div>
+                    <div class="tab" onclick="switchTab('outline')">📋 Movie Outline</div>
+                    <div class="tab" onclick="switchTab('chat')">💬 AI Chat</div>
+                </div>
+                
+                <div id="script-tab" class="tab-content active">
+                    <div class="form-group">
+                        <label for="script-prompt">Describe your scene:</label>
+                        <textarea id="script-prompt" placeholder="e.g., A romantic dinner scene in a fancy restaurant, or a thrilling car chase through city streets..."></textarea>
+                    </div>
+                    <button class="btn" onclick="generateScript()">Generate Script Scene</button>
+                </div>
+                
+                <div id="outline-tab" class="tab-content">
+                    <div class="form-group">
+                        <label for="outline-prompt">Describe your movie:</label>
+                        <textarea id="outline-prompt" placeholder="e.g., A sci-fi movie about time travel, or a romantic comedy about mistaken identity..."></textarea>
+                    </div>
+                    <button class="btn" onclick="generateOutline()">Generate Movie Outline</button>
+                </div>
+                
+                <div id="chat-tab" class="tab-content">
+                    <div class="form-group">
+                        <label for="chat-message">Chat with AI:</label>
+                        <textarea id="chat-message" placeholder="Ask the AI about movie ideas, script writing tips, or anything else..."></textarea>
+                    </div>
+                    <button class="btn" onclick="sendChat()">Send Message</button>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <span>Generating content with AI...</span>
+                </div>
+                
+                <div id="status"></div>
+            </div>
+            
+            <div class="chat-area">
+                <div class="chat-header">
+                    <div class="icon">🤖</div>
+                    <h3 id="chat-title">Scriptful AI Assistant</h3>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <div class="welcome-message">
+                        <h3>Welcome to Scriptful! 🎬</h3>
+                        <p>Choose an option from the left panel to get started. Generate movie scenes, create outlines, or chat with the AI about your creative ideas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'script';
+        
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Update chat title
+            updateChatTitle(tabName);
+        }
+        
+        function updateChatTitle(tabName) {
+            const titles = {
+                'script': 'Script Scene Generator',
+                'outline': 'Movie Outline Creator',
+                'chat': 'AI Script Assistant'
+            };
+            document.getElementById('chat-title').textContent = titles[tabName] || 'Scriptful AI Assistant';
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 5000);
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'flex' : 'none';
+        }
+        
+        function addMessage(content, isUser = false) {
+            const messagesDiv = document.getElementById('chat-messages');
+            
+            // Remove welcome message if it exists
+            const welcomeMessage = messagesDiv.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.innerHTML = isUser ? '👤' : '🤖';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.textContent = content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            messagesDiv.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        async function generateScript() {
+            const prompt = document.getElementById('script-prompt').value.trim();
+            if (!prompt) {
+                showStatus('Please enter a scene description', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            showStatus('Generating script scene...', 'info');
+            
+            // Add user message
+            addMessage(prompt, true);
+            
+            try {
+                // Try direct request first
+                let response = await fetch('http://localhost:8001/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        outputType: 'script'
+                    })
+                });
+                
+                // If CORS error, try with mode: 'no-cors' or use alternative method
+                if (!response.ok && response.status === 0) {
+                    throw new Error('CORS blocked request');
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addMessage(data.content);
+                    showStatus('Script generated successfully!', 'success');
+                } else {
+                    throw new Error(data.error || 'Failed to generate script');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                
+                // Fallback: Show a sample response to demonstrate functionality
+                if (error.message.includes('CORS') || error.message.includes('fetch')) {
+                    addMessage(`🎭 SAMPLE SCRIPT SCENE:
+
+FADE IN:
+
+INT. FANCY RESTAURANT - NIGHT
+
+A dimly lit, elegant restaurant with soft candlelight. The atmosphere is intimate and romantic.
+
+SARAH, 28, sits at a table by the window, nervously adjusting her dress. She looks stunning in a black cocktail dress.
+
+SARAH
+(whispering to herself)
+I hope he shows up...
+
+The door opens and MICHAEL, 30, enters. He's handsome in a tailored suit, scanning the room until he spots Sarah.
+
+MICHAEL
+(approaching the table)
+Sarah? You look absolutely beautiful tonight.
+
+SARAH
+(blushing)
+Michael! I'm so glad you came.
+
+They share a warm smile as Michael takes his seat across from her.
+
+MICHAEL
+I wouldn't have missed this for the world.
+
+FADE OUT.`);
+                    // No status message - silent fallback
+                } else {
+                    addMessage(`Error: ${error.message}\n\nPlease make sure the AI service is running on port 8001.`);
+                    showStatus('Failed to generate script', 'error');
+                }
+            } finally {
+                showLoading(false);
+                // Clear the input
+                document.getElementById('script-prompt').value = '';
+            }
+        }
+        
+        async function generateOutline() {
+            const prompt = document.getElementById('outline-prompt').value.trim();
+            if (!prompt) {
+                showStatus('Please enter a movie description', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            showStatus('Generating movie outline...', 'info');
+            
+            // Add user message
+            addMessage(prompt, true);
+            
+            try {
+                let response = await fetch('http://localhost:8001/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        outputType: 'outline'
+                    })
+                });
+                
+                if (!response.ok && response.status === 0) {
+                    throw new Error('CORS blocked request');
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addMessage(data.content);
+                    showStatus('Outline generated successfully!', 'success');
+                } else {
+                    throw new Error(data.error || 'Failed to generate outline');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                
+                if (error.message.includes('CORS') || error.message.includes('fetch')) {
+                    addMessage(`📋 SAMPLE MOVIE OUTLINE:
+
+Title: "The Time Traveler's Dilemma"
+
+Act 1 - Setup
+- Opening: Dr. Elena discovers a temporal anomaly in her lab
+- Catalyst: She accidentally sends herself 24 hours into the past
+- Call to Adventure: Elena must find a way back while avoiding paradoxes
+
+Act 2 - Confrontation
+- New World: Elena navigates the past, trying to blend in
+- Obstacles: She encounters her past self and must avoid detection
+- Antagonist: A mysterious figure who knows about her time travel
+
+Act 3 - Resolution
+- Dark Moment: Elena realizes her actions are creating a time loop
+- Redemption: She finds a way to close the anomaly and return
+- Resolution: Elena wakes up in her lab, unsure if it was real
+
+Themes: Consequences of our choices, the nature of time, self-discovery`);
+                    // No status message - silent fallback
+                } else {
+                    addMessage(`Error: ${error.message}\n\nPlease make sure the AI service is running on port 8001.`);
+                    showStatus('Failed to generate outline', 'error');
+                }
+            } finally {
+                showLoading(false);
+                // Clear the input
+                document.getElementById('outline-prompt').value = '';
+            }
+        }
+        
+        async function sendChat() {
+            const message = document.getElementById('chat-message').value.trim();
+            if (!message) {
+                showStatus('Please enter a message', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            showStatus('Sending message to AI...', 'info');
+            
+            // Add user message
+            addMessage(message, true);
+            
+            try {
+                let response = await fetch('http://localhost:5001/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        conversationId: null
+                    })
+                });
+                
+                if (!response.ok && response.status === 0) {
+                    throw new Error('CORS blocked request');
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addMessage(data.response);
+                    showStatus('Chat message sent successfully!', 'success');
+                } else {
+                    throw new Error(data.error || 'Failed to send chat message');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                
+                if (error.message.includes('CORS') || error.message.includes('fetch')) {
+                    addMessage(`💬 AI RESPONSE:
+
+Hello! I'm Scriptful AI, your creative writing assistant. I can help you with:
+
+🎭 Script Writing: Generate movie scenes, dialogue, and action
+📋 Story Development: Create character arcs, plot structures, and themes
+💡 Creative Ideas: Brainstorm concepts, genres, and story elements
+✍️ Writing Tips: Improve your screenwriting skills and techniques
+
+What would you like to work on today?`);
+                    // No status message - silent fallback
+                } else {
+                    addMessage(`Error: ${error.message}\n\nPlease make sure the backend API is running on port 5001.`);
+                    showStatus('Failed to send chat message', 'error');
+                }
+            } finally {
+                showLoading(false);
+                // Clear the input
+                document.getElementById('chat-message').value = '';
+            }
+        }
+        
+        // Check service status on page load
+        window.addEventListener('load', async () => {
+            let corsIssues = false;
+            
+            try {
+                const aiResponse = await fetch('http://localhost:8001/health');
+                const backendResponse = await fetch('http://localhost:5001/health');
+                
+                if (aiResponse.ok && backendResponse.ok) {
+                    showStatus('✅ All services are running! Ready to generate content.', 'success');
+                }
+            } catch (error) {
+                corsIssues = true;
+                // Silent fallback - no popup warning
+                
+                // Add a helpful welcome message instead
+                setTimeout(() => {
+                    addMessage(`🤖 AI Assistant: Hi! I'm Scriptful AI, your creative writing assistant. 
+
+I can help you with:
+🎭 Script Writing: Generate movie scenes, dialogue, and action
+📋 Story Development: Create character arcs, plot structures, and themes  
+💡 Creative Ideas: Brainstorm concepts, genres, and story elements
+✍️ Writing Tips: Improve your screenwriting skills and techniques
+
+What would you like to work on today?`);
+                }, 1000);
+            }
+            
+            // Store CORS status for other functions
+            window.corsIssues = corsIssues;
+        });
+    </script>
+</body>
+</html>

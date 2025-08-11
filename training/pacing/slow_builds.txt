@@ -1,0 +1,35 @@
+SLOW BUILD PACING TECHNIQUES
+============================
+
+FILM EXAMPLES:
+- "Jaws" (1975) - Gradual shark threat escalation
+- "The Shining" (1980) - Psychological tension building
+- "No Country for Old Men" (2007) - Methodical chase progression
+
+TECHNIQUE ANALYSIS:
+1. Gradual Escalation: Increase stakes incrementally
+2. Information Drip: Reveal details slowly over time
+3. Character Development: Use slower pace for relationship building
+4. Atmospheric Building: Create mood and tension gradually
+5. Anticipation: Make the audience wait for payoff
+
+IMPLEMENTATION STRATEGIES:
+- Start with small, seemingly unrelated events
+- Build connections between scenes gradually
+- Use dialogue to reveal character motivations
+- Create false sense of security
+- Increase tension through visual and audio cues
+
+PACING STRUCTURE:
+1. Setup: Establish normalcy and characters
+2. Inciting Incident: Introduce the central conflict
+3. Gradual Escalation: Small complications build up
+4. Rising Action: Stakes increase more rapidly
+5. Climax: All built-up tension releases
+
+KEY PRINCIPLES:
+- Every scene should advance the story
+- Use quiet moments to build anticipation
+- Balance action with character development
+- Make the audience care before raising stakes
+- The payoff should justify the build-up
