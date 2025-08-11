@@ -18,15 +18,23 @@ PORT = int(os.getenv('PORT', 8001))
 DEBUG = os.getenv('FLASK_ENV') == 'development'
 
 # OpenAI Configuration
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "your_openai_api_key_here")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Initialize OpenAI client
-try:
-    openai.api_key = OPENAI_API_KEY
-    openai_available = True
-except Exception as e:
-    print(f"OpenAI initialization error: {e}")
+if not OPENAI_API_KEY or OPENAI_API_KEY == "your_openai_api_key_here":
+    print("⚠️  WARNING: OPENAI_API_KEY not set or using default value")
+    print("   Please create a .env file with your actual OpenAI API key")
+    print("   Example: OPENAI_API_KEY=sk-your_actual_key_here")
     openai_available = False
+else:
+    try:
+        openai.api_key = OPENAI_API_KEY
+        # Test the API key with a simple request
+        openai_available = True
+        print(f"✅ OpenAI API key loaded successfully")
+    except Exception as e:
+        print(f"❌ OpenAI initialization error: {e}")
+        openai_available = False
 
 class ScriptGenerator:
     def __init__(self):
@@ -457,7 +465,9 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),
-        'training_data_count': len(script_generator.training_data)
+        'training_data_count': len(script_generator.training_data),
+        'openai_available': openai_available,
+        'openai_status': 'configured' if openai_available else 'not_configured'
     })
 
 @app.route('/generate', methods=['POST'])
