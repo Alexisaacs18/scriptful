@@ -111,34 +111,35 @@ class ScriptGenerator:
         return parsed
     
     def generate_script_scene_with_openai(self, prompt, context=None):
-        """Generate a script scene using OpenAI API"""
+        """Generate a script scene using OpenAI API for intelligence + training data for content"""
         if not openai_available:
             return self.generate_script_scene_fallback(prompt, context)
         
         try:
-            # Create context from training data
-            training_context = ""
-            if self.training_data:
-                # Use the first few training scripts as context
-                context_scripts = self.training_data[:2]
-                for script in context_scripts:
-                    training_context += f"\n--- Training Script: {script['filename']} ---\n"
-                    training_context += script['content'][:500] + "...\n"
+            # Extract relevant content from training data based on prompt
+            relevant_content = self._extract_relevant_training_content(prompt)
             
-            system_prompt = f"""You are a professional screenwriter. Generate a movie script scene based on the user's prompt.
+            # Create intelligent prompt for GPT to orchestrate the content
+            system_prompt = f"""You are a professional screenwriter. Your job is to intelligently structure and combine content from training data to create compelling scenes.
 
-Training Data Context:
-{training_context}
+Available Training Content:
+{relevant_content}
+
+Your Role:
+- Use the training data above as your PRIMARY source of actual content
+- Intelligently combine, adapt, and structure this content
+- Maintain the style and tone of the training data
+- Create coherent, engaging scenes
+- Only generate new content if absolutely necessary to fill gaps
 
 Instructions:
-- Write in proper screenplay format
-- Include scene headings (INT./EXT.), character names in ALL CAPS, dialogue, and action descriptions
-- Make it engaging and cinematic
-- Keep the scene focused and well-paced
-- Use the training data as inspiration for style and format"""
+- Extract dialogue, descriptions, and action from training data
+- Combine them intelligently based on the user's prompt
+- Maintain screenplay format and structure
+- Keep the authentic voice from the training data"""
 
-            user_prompt = f"Generate a movie script scene about: {prompt}"
-            
+            user_prompt = f"Create a compelling script scene about: {prompt}\n\nUse the training data above as your primary content source. Structure it intelligently into a complete scene."
+
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
@@ -146,7 +147,7 @@ Instructions:
                     {"role": "user", "content": user_prompt}
                 ],
                 max_tokens=1000,
-                temperature=0.8
+                temperature=0.3  # Lower temperature for more consistent use of training data
             )
             
             return response.choices[0].message.content
@@ -156,31 +157,35 @@ Instructions:
             return self.generate_script_scene_fallback(prompt, context)
     
     def generate_movie_outline_with_openai(self, prompt, context=None):
-        """Generate a movie outline using OpenAI API"""
+        """Generate a movie outline using OpenAI API for intelligence + training data for content"""
         if not openai_available:
             return self.generate_movie_outline_fallback(prompt, context)
         
         try:
-            # Create context from training data
-            context_scripts = self.training_data[:2]
-            training_context = ""
-            for script in context_scripts:
-                training_context += f"\n--- Training Script: {script['filename']} ---\n"
-                training_context += script['content'][:500] + "...\n"
+            # Extract relevant content from training data based on prompt
+            relevant_content = self._extract_relevant_training_content(prompt)
             
-            system_prompt = f"""You are a professional screenwriter. Generate a movie outline based on the user's prompt.
+            # Create intelligent prompt for GPT to orchestrate the content
+            system_prompt = f"""You are a professional screenwriter. Your job is to intelligently structure and combine content from training data to create compelling movie outlines.
 
-Training Data Context:
-{training_context}
+Available Training Content:
+{relevant_content}
+
+Your Role:
+- Use the training data above as your PRIMARY source of actual content
+- Intelligently combine, adapt, and structure this content into a 3-act outline
+- Maintain the style and tone of the training data
+- Create coherent, engaging plot structures
+- Only generate new content if absolutely necessary to fill gaps
 
 Instructions:
-- Create a structured 3-act outline
-- Include key plot points, character arcs, and themes
-- Make it compelling and well-structured
-- Use the training data as inspiration for style and content"""
+- Extract plot points, character arcs, themes, and scenes from training data
+- Combine them intelligently based on the user's prompt
+- Structure into a compelling 3-act outline
+- Keep the authentic voice from the training data"""
 
-            user_prompt = f"Generate a movie outline about: {prompt}"
-            
+            user_prompt = f"Create a compelling 3-act movie outline about: {prompt}\n\nUse the training data above as your primary content source. Structure it intelligently into a complete outline."
+
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
@@ -188,7 +193,7 @@ Instructions:
                     {"role": "user", "content": user_prompt}
                 ],
                 max_tokens=800,
-                temperature=0.7
+                temperature=0.3  # Lower temperature for more consistent use of training data
             )
             
             return response.choices[0].message.content
@@ -198,47 +203,60 @@ Instructions:
             return self.generate_movie_outline_fallback(prompt, context)
     
     def generate_script_scene_fallback(self, prompt, context=None):
-        """Fallback script generation when OpenAI is not available"""
-        # This is the original simplified generator
+        """Fallback script generation using training data as primary content source"""
+        # Extract relevant content from training data
+        relevant_content = self._extract_relevant_training_content(prompt)
+        
+        # Parse the training content to extract usable elements
+        parsed_content = self._parse_training_content_for_fallback(relevant_content)
+        
+        # Create scene using training data
         scene_template = f"""FADE IN:
 
-INT. LOCATION - DAY
+{parsed_content.get('scene_heading', 'INT. LOCATION - DAY')}
 
-{self._generate_scene_description(prompt)}
+{parsed_content.get('scene_description', self._generate_scene_description(prompt))}
 
-CHARACTER NAME
-{self._generate_dialogue(prompt)}
+{parsed_content.get('character_name', 'CHARACTER NAME')}
+{parsed_content.get('dialogue', self._generate_dialogue(prompt))}
 
-ANOTHER CHARACTER
-{self._generate_response(prompt)}
+{parsed_content.get('response_character', 'ANOTHER CHARACTER')}
+{parsed_content.get('response_dialogue', self._generate_response(prompt))}
 
-{self._generate_action_line(prompt)}
+{parsed_content.get('action_line', self._generate_action_line(prompt))}
 
 FADE OUT."""
         
         return scene_template
     
     def generate_movie_outline_fallback(self, prompt, context=None):
-        """Fallback outline generation when OpenAI is not available"""
+        """Fallback outline generation using training data as primary content source"""
+        # Extract relevant content from training data
+        relevant_content = self._extract_relevant_training_content(prompt)
+        
+        # Parse the training content to extract usable elements
+        parsed_content = self._parse_training_content_for_fallback(relevant_content)
+        
+        # Create outline using training data
         outline_template = f"""MOVIE OUTLINE: {prompt[:50]}...
 
 ACT I - SETUP
-- Opening scene: {self._generate_scene_description(prompt)}
-- Introduce main character: {self._generate_character_description(prompt)}
-- Inciting incident: {self._generate_plot_point(prompt)}
+- Opening scene: {parsed_content.get('opening_scene', self._generate_scene_description(prompt))}
+- Introduce main character: {parsed_content.get('character_intro', self._generate_character_description(prompt))}
+- Inciting incident: {parsed_content.get('inciting_incident', self._generate_plot_point(prompt))}
 
 ACT II - CONFRONTATION
-- Rising action: {self._generate_plot_point(prompt)}
-- Midpoint: {self._generate_plot_point(prompt)}
-- Complications: {self._generate_plot_point(prompt)}
+- Rising action: {parsed_content.get('rising_action', self._generate_plot_point(prompt))}
+- Midpoint: {parsed_content.get('midpoint', self._generate_plot_point(prompt))}
+- Complications: {parsed_content.get('complications', self._generate_plot_point(prompt))}
 
 ACT III - RESOLUTION
-- Climax: {self._generate_plot_point(prompt)}
-- Falling action: {self._generate_plot_point(prompt)}
-- Resolution: {self._generate_plot_point(prompt)}
+- Climax: {parsed_content.get('climax', self._generate_plot_point(prompt))}
+- Falling action: {parsed_content.get('falling_action', self._generate_plot_point(prompt))}
+- Resolution: {parsed_content.get('resolution', self._generate_plot_point(prompt))}
 
-THEMES: {self._generate_themes(prompt)}
-GENRE: {self._generate_genre(prompt)}"""
+THEMES: {parsed_content.get('themes', self._generate_themes(prompt))}
+GENRE: {parsed_content.get('genre', self._generate_genre(prompt))}"""
         
         return outline_template
     
@@ -325,6 +343,110 @@ GENRE: {self._generate_genre(prompt)}"""
             "Drama", "Thriller", "Romance", "Mystery", "Action"
         ]
         return genres[hash(prompt) % len(genres)]
+
+    def _extract_relevant_training_content(self, prompt):
+        """Extract the most relevant training content based on the prompt"""
+        # Analyze prompt for keywords
+        prompt_lower = prompt.lower()
+        keywords = prompt_lower.split()
+        
+        # Score training data based on relevance
+        scored_content = []
+        for script in self.training_data:
+            score = 0
+            content_lower = script['content'].lower()
+            
+            # Score based on keyword matches
+            for keyword in keywords:
+                if keyword in content_lower:
+                    score += 1
+            
+            # Score based on content length (more content = more options)
+            score += len(script['content']) / 1000
+            
+            # Score based on filename relevance
+            if any(keyword in script['filename'].lower() for keyword in keywords):
+                score += 5
+            
+            scored_content.append((score, script))
+        
+        # Sort by relevance score and take top 3
+        scored_content.sort(key=lambda x: x[0], reverse=True)
+        top_content = scored_content[:3]
+        
+        # Format the content for GPT
+        formatted_content = ""
+        for score, script in top_content:
+            formatted_content += f"\n--- Training Script: {script['filename']} (Relevance: {score:.1f}) ---\n"
+            # Include more content since this is now the primary source
+            formatted_content += script['content'][:1000] + "...\n"
+        
+        return formatted_content
+
+    def _parse_training_content_for_fallback(self, training_content):
+        """Parse training content to extract usable elements for fallback generation"""
+        parsed = {}
+        
+        # Extract scene headings (INT./EXT.)
+        scene_pattern = r'^(INT\.|EXT\.|INT\/EXT\.).*$'
+        scenes = re.findall(scene_pattern, training_content, re.MULTILINE)
+        if scenes:
+            parsed['scene_heading'] = scenes[0]
+        
+        # Extract character names and dialogue
+        character_pattern = r'^[A-Z\s]+$'
+        lines = training_content.split('\n')
+        dialogue_pairs = []
+        
+        for i, line in enumerate(lines):
+            if re.match(character_pattern, line.strip()) and i + 1 < len(lines):
+                next_line = lines[i + 1].strip()
+                if next_line and not re.match(character_pattern, next_line):
+                    dialogue_pairs.append((line.strip(), next_line))
+        
+        if dialogue_pairs:
+            parsed['character_name'] = dialogue_pairs[0][0]
+            parsed['dialogue'] = dialogue_pairs[0][1]
+            if len(dialogue_pairs) > 1:
+                parsed['response_character'] = dialogue_pairs[1][0]
+                parsed['response_dialogue'] = dialogue_pairs[1][1]
+        
+        # Extract scene descriptions
+        descriptions = []
+        for line in lines:
+            line = line.strip()
+            if (line and 
+                not re.match(scene_pattern, line) and 
+                not re.match(character_pattern, line) and
+                not line.startswith('(') and
+                not line.startswith('FADE') and
+                len(line) > 20):
+                descriptions.append(line)
+        
+        if descriptions:
+            parsed['scene_description'] = descriptions[0]
+            parsed['opening_scene'] = descriptions[0]
+        
+        # Extract plot points and themes
+        plot_points = [
+            "A discovery that changes everything",
+            "A betrayal that shatters trust", 
+            "A choice that defines character",
+            "A revelation that explains the past",
+            "A decision that shapes the future"
+        ]
+        
+        # Use training data if available, otherwise fallback
+        if descriptions:
+            parsed['inciting_incident'] = descriptions[1] if len(descriptions) > 1 else plot_points[0]
+            parsed['rising_action'] = descriptions[2] if len(descriptions) > 2 else plot_points[1]
+            parsed['midpoint'] = descriptions[3] if len(descriptions) > 3 else plot_points[2]
+            parsed['complications'] = descriptions[4] if len(descriptions) > 4 else plot_points[3]
+            parsed['climax'] = descriptions[5] if len(descriptions) > 5 else plot_points[4]
+            parsed['falling_action'] = descriptions[6] if len(descriptions) > 6 else plot_points[0]
+            parsed['resolution'] = descriptions[7] if len(descriptions) > 7 else plot_points[1]
+        
+        return parsed
 
 # Initialize the script generator
 script_generator = ScriptGenerator()
